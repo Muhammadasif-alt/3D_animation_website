@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Clash Display", sans-serif;
+  --font-body: "Satoshi", sans-serif;
+}
+
+html {
+  background: #070707;
+}
+
+::selection {
+  background: #d4af37;
+  color: #0a0a0a;
+}

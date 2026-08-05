@@ -1,0 +1,502 @@
+<!--
+  ==================================================================
+  ICE CREAM HERO SLIDER  —  Elementor HTML Widget
+  ==================================================================
+  Bara flavour word (BERRIES / BANANA ...) bowl ke PEECHE rehta hai.
+  Ye koi masking nahi hai — sirf stacking order hai:
+
+        z-4   copy (title + text + button)
+        z-3   floating fruit pieces   (optional)
+        z-2   bowl PNG/WebP           <-- background TRANSPARENT hona zaroori
+        z-1   giant word              <-- poora likha hota hai, bas chup jata hai
+        z-0   color gradient
+
+  Koi JS library load NAHI hoti. Saari animation CSS transitions se hai.
+
+  ------------------------------------------------------------------
+  LAGANE KA TAREEQA
+  ------------------------------------------------------------------
+  1) 4 bowl images WP Media Library mein upload karo.
+     ZAROORI: transparent background wali WebP/PNG. JPG chalegi hi nahi —
+     uska solid rectangle poore word ko dhak dega.
+
+  2) Elementor mein ek full-width Container banao:
+       -> Layout -> Content Width : Full Width
+       -> Layout -> Min Height    : 100vh
+       -> Advanced -> Padding     : 0  (chaaron taraf)
+
+  3) Us container mein "HTML" widget daalo aur ye poori file paste kar do.
+
+  4) Neeche har slide ke <img src="..."> mein apni Media Library ki URL
+     paste karo. Jahan  👉 REPLACE  likha hai wahi 4 jagah badalni hain.
+     (Media Library -> image pe click -> "File URL" copy)
+
+  5) Text/colors seedha isi HTML mein edit kar lo — sab niche saaf marked hai.
+  ------------------------------------------------------------------
+-->
+
+<!-- Didone serif. Agar aapki theme pehle se Playfair load karti hai to ye 2 lines hata do. -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap">
+
+<div id="mkh-hero" class="mkh mkh-fullbleed" role="region" aria-roledescription="carousel" aria-label="Ice cream flavours">
+
+  <!-- ============================================================
+       NAVBAR
+       Agar aapki theme ka apna header hai to poora <header> block
+       delete kar dein — baaki sab waise hi chalta rahega.
+       ============================================================ -->
+  <header class="mkh-nav">
+    <a class="mkh-logo" href="/">Milk.</a>
+
+    <nav class="mkh-links" aria-label="Primary">
+      <a href="#home"    class="is-current">Home</a>
+      <a href="#about">About</a>
+      <a href="#shop">Shop</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="mkh-icons">
+      <a class="mkh-ico" href="/cart" aria-label="Cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h2l2.4 9.6a2 2 0 0 0 2 1.5h6.9a2 2 0 0 0 2-1.5L20 8H6"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>
+      </a>
+      <button class="mkh-ico" type="button" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      </button>
+    </div>
+  </header>
+
+
+  <!-- ============================================================
+       SLIDES
+       ============================================================ -->
+  <div class="mkh-slides" style="--dir:1">
+
+    <!-- ---------- SLIDE 1 : STRAWBERRY ---------- -->
+    <article class="mkh-slide is-active" style="--c1:#D10B43; --c2:#96052C">
+      <h2 class="mkh-word">STRAW</h2>
+
+      <div class="mkh-bowlwrap">
+        <!-- 👉 REPLACE  -->
+        <img class="mkh-bowl" alt="Berry Pure strawberry ice cream bowl"
+             fetchpriority="high" draggable="false"
+             src="https://YOUR-SITE.com/wp-content/uploads/2026/07/bowl-strawberry.webp">
+      </div>
+
+      <div class="mkh-copy">
+        <h3>Berry Pure</h3>
+        <p>Fresh strawberries, creamy scoops, and white chocolate pieces in one smooth, dreamy dessert.</p>
+        <a class="mkh-btn" href="#shop">Shop this flavor <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+
+    <!-- ---------- SLIDE 2 : BLUEBERRY ---------- -->
+    <article class="mkh-slide" style="--c1:#7D10D6; --c2:#45098A">
+      <h2 class="mkh-word">BERRIES</h2>
+
+      <div class="mkh-bowlwrap">
+        <!-- 👉 REPLACE  -->
+        <img class="mkh-bowl" alt="Blue Bliss blueberry ice cream bowl"
+             loading="lazy" draggable="false"
+             src="https://YOUR-SITE.com/wp-content/uploads/2026/07/bowl-berries.webp">
+      </div>
+
+      <div class="mkh-copy">
+        <h3>Blue Bliss</h3>
+        <p>A smooth and refreshing blueberry ice cream made with ripe berries. Perfectly refreshing for any time of day.</p>
+        <a class="mkh-btn" href="#shop">Shop this flavor <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+
+    <!-- ---------- SLIDE 3 : BANANA ---------- -->
+    <article class="mkh-slide" style="--c1:#E8A800; --c2:#B87A00">
+      <h2 class="mkh-word">BANANA</h2>
+
+      <div class="mkh-bowlwrap">
+        <!-- 👉 REPLACE  -->
+        <img class="mkh-bowl" alt="Banana Crush banana ice cream bowl"
+             loading="lazy" draggable="false"
+             src="https://YOUR-SITE.com/wp-content/uploads/2026/07/bowl-banana.webp">
+      </div>
+
+      <div class="mkh-copy">
+        <h3>Banana Crush</h3>
+        <p>A smooth and creamy banana ice cream made with white chocolate. Perfectly satisfying for any time of day.</p>
+        <a class="mkh-btn" href="#shop">Shop this flavor <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+
+    <!-- ---------- SLIDE 4 : KIWI ---------- -->
+    <article class="mkh-slide" style="--c1:#28A11F; --c2:#0B5E12">
+      <h2 class="mkh-word">KIWIS</h2>
+
+      <div class="mkh-bowlwrap">
+        <!-- 👉 REPLACE  -->
+        <img class="mkh-bowl" alt="Kiwi Flavor kiwi ice cream bowl"
+             loading="lazy" draggable="false"
+             src="https://YOUR-SITE.com/wp-content/uploads/2026/07/bowl-kiwi.webp">
+      </div>
+
+      <div class="mkh-copy">
+        <h3>Kiwi Flavor</h3>
+        <p>A smooth and refreshing kiwi ice cream. Rich and perfectly balanced for any time of day.</p>
+        <a class="mkh-btn" href="#shop">Shop this flavor <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- ============================================================
+       ARROWS
+       ============================================================ -->
+  <div class="mkh-arrows">
+    <button class="mkh-arrow" type="button" data-mkh="prev" aria-label="Previous flavor">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
+    </button>
+    <button class="mkh-arrow" type="button" data-mkh="next" aria-label="Next flavor">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <p class="mkh-sr" aria-live="polite"></p>
+</div>
+
+
+<style>
+/* ==================================================================
+   Sab kuch #mkh-hero ke andar scoped hai — theme ke CSS se nahi takrayega
+   ================================================================== */
+#mkh-hero, #mkh-hero * { box-sizing: border-box; }
+
+#mkh-hero {
+  --serif: "Playfair Display", Didot, Georgia, serif;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100svh;          /* mobile browser bar ko account karta hai */
+  background: #0b0b0b;
+  font-family: inherit;
+}
+
+/* Elementor container agar full-width nahi hai to ye edge-to-edge kar deta hai.
+   Pehle se full-width ho to bhi nuqsan nahi. Agar horizontal scrollbar aa jaye
+   to ye poori class hata dein (class="mkh" reh jaye). */
+#mkh-hero.mkh-fullbleed {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+/* ---------------- NAVBAR ---------------- */
+#mkh-hero .mkh-nav {
+  position: absolute; inset: 0 0 auto 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 4vw;
+}
+#mkh-hero .mkh-logo {
+  font-family: var(--serif);
+  font-style: italic; font-weight: 700;
+  font-size: clamp(28px, 3vw, 40px);
+  color: #fff; text-decoration: none; line-height: 1;
+}
+#mkh-hero .mkh-links {
+  display: flex; gap: 2px; padding: 6px;
+  background: rgba(255,255,255,.15);
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#mkh-hero .mkh-links a {
+  padding: 12px 30px; border-radius: 999px;
+  font-size: 14px; letter-spacing: .04em; text-transform: uppercase;
+  color: #fff; text-decoration: none;
+  transition: background-color .25s ease, color .25s ease;
+}
+#mkh-hero .mkh-links a:hover { background: rgba(255,255,255,.12); }
+#mkh-hero .mkh-links a.is-current { background: #fff; color: #111; }
+
+#mkh-hero .mkh-icons { display: flex; gap: 12px; }
+#mkh-hero .mkh-ico {
+  display: grid; place-items: center;
+  width: 54px; height: 54px; border: 0; border-radius: 999px;
+  background: rgba(255,255,255,.15); color: #fff; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background-color .25s ease;
+}
+#mkh-hero .mkh-ico:hover { background: rgba(255,255,255,.28); }
+#mkh-hero .mkh-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------------- SLIDES ---------------- */
+#mkh-hero .mkh-slides { position: absolute; inset: 0; }
+
+#mkh-hero .mkh-slide {
+  position: absolute; inset: 0; z-index: 1;
+  margin: 0; opacity: 0; visibility: hidden; pointer-events: none;
+  background: radial-gradient(130% 110% at 22% 38%, var(--c1) 0%, var(--c2) 68%, var(--c2) 100%);
+  transition: opacity .7s ease, visibility 0s linear .7s;
+}
+#mkh-hero .mkh-slide.is-active {
+  z-index: 2; opacity: 1; visibility: visible; pointer-events: auto;
+  transition: opacity .7s ease, visibility 0s;
+}
+
+/* ---- z-1 : giant word (bowl ke PEECHE) ---- */
+#mkh-hero .mkh-word {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0; padding: 0;
+  font-family: var(--serif); font-weight: 700;
+  font-size: clamp(5rem, 21vw, 20rem);
+  line-height: .9; letter-spacing: -.02em; white-space: nowrap;
+  user-select: none; pointer-events: none;
+  background-image: linear-gradient(180deg, #fff 0%, #fff 55%, rgba(255,255,255,.72) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  opacity: 0; transform: scale(1.22);
+  transition: opacity 1s ease, transform 1s cubic-bezier(.16,1,.3,1);
+}
+#mkh-hero .mkh-slide.is-active .mkh-word {
+  opacity: 1; transform: none; transition-delay: .05s;
+}
+
+/* ---- z-2 : bowl (word ko dhakta hai) ---- */
+#mkh-hero .mkh-bowlwrap {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  /* mouse parallax — JS sirf --px / --py set karta hai */
+  transform: translate3d(calc(var(--px, 0) * 18px), calc(var(--py, 0) * 14px), 0);
+  transition: transform .9s cubic-bezier(.16,1,.3,1);
+}
+#mkh-hero .mkh-bowl {
+  height: 78vh; max-height: 820px;
+  width: auto; max-width: 92vw;
+  object-fit: contain; display: block;
+  transform: translateY(30px) scale(.78) rotate(calc(24deg * var(--dir, 1)));
+  transition: transform 1.15s cubic-bezier(.16,1,.3,1);
+}
+#mkh-hero .mkh-slide.is-active .mkh-bowl {
+  transform: translateY(0) scale(1) rotate(0deg);
+}
+
+/* ---- z-4 : copy ---- */
+#mkh-hero .mkh-copy {
+  position: absolute; z-index: 4;
+  left: 4vw; bottom: 8vh; max-width: 560px;
+}
+#mkh-hero .mkh-copy > * {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .65s ease, transform .65s cubic-bezier(.16,1,.3,1);
+}
+#mkh-hero .mkh-slide.is-active .mkh-copy > * { opacity: 1; transform: none; }
+#mkh-hero .mkh-slide.is-active .mkh-copy > *:nth-child(1) { transition-delay: .20s; }
+#mkh-hero .mkh-slide.is-active .mkh-copy > *:nth-child(2) { transition-delay: .27s; }
+#mkh-hero .mkh-slide.is-active .mkh-copy > *:nth-child(3) { transition-delay: .34s; }
+
+#mkh-hero .mkh-copy h3 {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; color: #fff;
+}
+#mkh-hero .mkh-copy p {
+  margin: 16px 0 0; max-width: 460px;
+  font-size: clamp(15px, 1.15vw, 18px); line-height: 1.6;
+  color: rgba(255,255,255,.82);
+}
+#mkh-hero .mkh-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  margin-top: 28px; padding: 16px 28px; border-radius: 6px;
+  background: #fff; color: #000; text-decoration: none;
+  font-size: 14px; font-weight: 600;
+  transition: transform .25s ease;
+}
+#mkh-hero .mkh-btn:hover { transform: scale(1.05); }
+
+/* ---------------- ARROWS ---------------- */
+#mkh-hero .mkh-arrows {
+  position: absolute; z-index: 50; right: 4vw; bottom: 6vh;
+  display: flex; gap: 16px;
+}
+#mkh-hero .mkh-arrow {
+  display: grid; place-items: center;
+  width: 62px; height: 62px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.6);
+  background: transparent; color: #fff; cursor: pointer;
+  transition: background-color .25s ease, color .25s ease;
+}
+#mkh-hero .mkh-arrow:hover { background: #fff; color: #111; }
+#mkh-hero .mkh-arrow svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* screen-reader only announcement */
+#mkh-hero .mkh-sr {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 900px) {
+  #mkh-hero .mkh-links { display: none; }
+}
+@media (max-width: 768px) {
+  #mkh-hero .mkh-nav { padding: 20px 5vw; }
+  #mkh-hero .mkh-ico { width: 46px; height: 46px; }
+
+  /* bowl upar shift, taake neeche copy ke liye jagah bane */
+  #mkh-hero .mkh-bowlwrap { align-items: flex-start; padding-top: 13vh; }
+  #mkh-hero .mkh-bowl { height: 42vh; max-width: 84vw; }
+  #mkh-hero .mkh-word { align-items: flex-start; padding-top: 26vh; font-size: 24vw; }
+
+  #mkh-hero .mkh-copy { left: 5vw; right: 5vw; bottom: 13vh; max-width: none; }
+  #mkh-hero .mkh-btn { margin-top: 20px; padding: 14px 22px; }
+
+  #mkh-hero .mkh-arrows { right: 5vw; bottom: 4vh; gap: 12px; }
+  #mkh-hero .mkh-arrow { width: 50px; height: 50px; }
+}
+
+/* ---------------- ACCESSIBILITY ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  #mkh-hero .mkh-word,
+  #mkh-hero .mkh-bowl,
+  #mkh-hero .mkh-bowlwrap,
+  #mkh-hero .mkh-slide,
+  #mkh-hero .mkh-copy > * {
+    transition: opacity .2s linear !important;
+    transform: none !important;
+  }
+}
+#mkh-hero :focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+</style>
+
+
+<script>
+(function () {
+  "use strict";
+
+  /* ==================================================================
+     CONFIG  —  SIRF YAHAN EDIT KARO
+     ================================================================== */
+  var CONFIG = {
+    autoplayMs: 6000,   // har slide kitni der dikhe. 0 = autoplay band.
+    parallax:   true,   // mouse ke saath bowl ka halka movement
+    swipe:      true,   // mobile pe ungli se slide change
+    keyboard:   true    // left / right arrow keys
+  };
+  /* ================================================================== */
+
+  var root = document.getElementById("mkh-hero");
+  if (!root || root.dataset.mkhInit) return;
+  root.dataset.mkhInit = "1";
+
+  var track  = root.querySelector(".mkh-slides");
+  var slides = Array.prototype.slice.call(root.querySelectorAll(".mkh-slide"));
+  var live   = root.querySelector(".mkh-sr");
+  if (!track || slides.length < 2) return;
+
+  var noMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var index = slides.findIndex(function (s) { return s.classList.contains("is-active"); });
+  if (index < 0) index = 0;
+
+  function sync() {
+    slides.forEach(function (s, i) {
+      var active = i === index;
+      s.classList.toggle("is-active", active);
+      s.setAttribute("aria-hidden", active ? "false" : "true");
+    });
+    var h3 = slides[index].querySelector("h3");
+    if (live && h3) live.textContent = h3.textContent + " — slide " + (index + 1) + " of " + slides.length;
+  }
+
+  /** dir: 1 = aage, -1 = peeche. Isi se bowl ka entry angle set hota hai. */
+  function go(dir) {
+    var n = ((index + dir) % slides.length + slides.length) % slides.length;
+    if (n === index) return;
+    track.style.setProperty("--dir", dir < 0 ? "-1" : "1");
+    index = n;
+    sync();
+  }
+
+  sync();
+
+  /* ---------- arrows ---------- */
+  root.querySelectorAll("[data-mkh]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      restart();
+      go(btn.dataset.mkh === "next" ? 1 : -1);
+    });
+  });
+
+  /* ---------- autoplay ---------- */
+  var timer = null;
+  function start() {
+    if (!CONFIG.autoplayMs || noMotion) return;
+    stop();
+    timer = window.setInterval(function () { go(1); }, CONFIG.autoplayMs);
+  }
+  function stop() { if (timer) { window.clearInterval(timer); timer = null; } }
+  function restart() { stop(); start(); }
+
+  start();
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", start);
+  root.addEventListener("focusin", stop);
+  root.addEventListener("focusout", start);
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) stop(); else start();
+  });
+
+  /* ---------- keyboard ---------- */
+  if (CONFIG.keyboard) {
+    root.setAttribute("tabindex", "0");
+    root.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      e.preventDefault();
+      restart();
+      go(e.key === "ArrowRight" ? 1 : -1);
+    });
+  }
+
+  /* ---------- touch swipe ---------- */
+  if (CONFIG.swipe) {
+    var x0 = null, y0 = null;
+    root.addEventListener("touchstart", function (e) {
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    }, { passive: true });
+    root.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      var dy = e.changedTouches[0].clientY - y0;
+      // sirf horizontal swipe — warna page scroll block ho jata hai
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        restart();
+        go(dx < 0 ? 1 : -1);
+      }
+      x0 = y0 = null;
+    }, { passive: true });
+  }
+
+  /* ---------- mouse parallax ---------- */
+  if (CONFIG.parallax && !noMotion && window.matchMedia("(hover:hover)").matches) {
+    var queued = false, mx = 0, my = 0;
+    root.addEventListener("mousemove", function (e) {
+      var r = root.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width  - 0.5) * 2;
+      my = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () {
+        queued = false;
+        var wrap = slides[index].querySelector(".mkh-bowlwrap");
+        if (!wrap) return;
+        wrap.style.setProperty("--px", mx.toFixed(3));
+        wrap.style.setProperty("--py", my.toFixed(3));
+      });
+    });
+    root.addEventListener("mouseleave", function () {
+      slides.forEach(function (s) {
+        var w = s.querySelector(".mkh-bowlwrap");
+        if (w) { w.style.setProperty("--px", 0); w.style.setProperty("--py", 0); }
+      });
+    });
+  }
+})();
+</script>

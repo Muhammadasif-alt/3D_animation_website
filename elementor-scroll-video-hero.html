@@ -1,0 +1,306 @@
+<!--
+  ==================================================================
+  HERO VIDEO BACKGROUND  —  Elementor HTML Widget
+  ==================================================================
+  Ye widget aapke MAUJOODA Elementor hero container ke PEECHE video
+  laga deta hai. Aapka saara design (checkboxes, heading, buttons)
+  Elementor mein hi rehta hai — bas video uske peeche aa jati hai.
+
+  ------------------------------------------------------------------
+  LAGANE KA TAREEQA (3 step)
+  ------------------------------------------------------------------
+  1) Elementor mein apne hero Container pe click karo
+       -> Advanced -> CSS Classes  mein likho:   hero-video
+       -> Style -> Background      : koi image mat rakho (ya poster rakho)
+       -> Layout -> Min Height     : 100vh
+       -> Advanced -> Overflow     : Default   (hidden MAT karo)
+
+  2) Usi container ke andar sabse upar ek "HTML" widget daalo
+     aur ye poori file paste kar do.
+
+  3) Neeche CONFIG block mein videoUrl / posterUrl set karo.
+  ------------------------------------------------------------------
+-->
+
+<div id="svh-mount" style="display:none"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ==================================================================
+     CONFIG  —  SIRF YAHAN EDIT KARO
+     ================================================================== */
+  var CONFIG = {
+
+    /* ---- Media ---- */
+    // WP Media Library -> video pe click -> "File URL" copy karke yahan paste
+    videoUrl:  "http://jacobj27.sg-host.com/wp-content/uploads/2026/07/walkthrough.mp4",
+
+    // Poster image. ZAROORI hai — video load hone se pehle yahi dikhti hai,
+    // aur mobile pe video ki jagah sirf yahi load hoti hai (speed).
+    posterUrl: "",
+
+    /* ---- Mode ----
+       "loop"  = video chalti rehti hai, content hamesha visible.  [RECOMMENDED]
+                 Fast. Koi external JS library load nahi hoti.
+       "scrub" = video scroll se aage-peeche chalti hai, content aakhir mein
+                 fade-in hota hai. Cinematic, lekin bhaari (GSAP + badi video). */
+    mode: "loop",
+
+    /* ---- Kis container pe lagani hai ----
+       Elementor mein hero container ko ye CSS class do. */
+    hostSelector: ".hero-video",
+
+    /* ---- Text readability ----
+       Video ke upar kaala overlay. 0 = bilkul nahi, 1 = poora kaala.
+       Aapka text safaid hai is liye 0.45-0.6 theek rehta hai. */
+    overlay: 0.5,
+
+    /* ---- Mobile (SPEED KA SABSE BADA FAYDA) ----
+       false = mobile pe video download hi nahi hogi, sirf poster image.
+       Isse mobile PageSpeed score bacha rehta hai. */
+    mobileVideo: false,
+    mobileBreakpoint: 768,
+
+    /* ---- Content ka fade-in ---- */
+    revealContent: true,
+
+    /* ---- Sirf "scrub" mode ke liye ---- */
+    scrollLength: "+=300%",   // kitne scroll mein poori video chale
+    scrub: 0.6,               // 0.3 tight, 1 floaty
+    smoothScroll: true        // Lenis. Theme already smooth kare to false
+  };
+  /* ================================================================== */
+
+
+  var mount = document.getElementById("svh-mount");
+  if (!mount) return;
+
+  /* ---------- Host container dhoondo ---------- */
+  var host = CONFIG.hostSelector ? document.querySelector(CONFIG.hostSelector) : null;
+  if (!host) host = mount.closest(".e-con, .elementor-section, .elementor-container");
+  if (!host) { console.error("[hero-video] Container nahi mila. Container ko CSS class 'hero-video' do."); return; }
+  if (host.dataset.svhInit) return;              // double-init se bachao
+  host.dataset.svhInit = "1";
+
+  // HTML widget ka khali wrapper hata do taaki layout mein gap na aaye
+  var widget = mount.closest(".elementor-widget-html");
+  if (widget) widget.style.display = "none";
+
+  var isMobile  = window.matchMedia("(max-width:" + (CONFIG.mobileBreakpoint - 1) + "px)").matches;
+  var noMotion  = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var useVideo  = CONFIG.videoUrl && (!isMobile || CONFIG.mobileVideo);
+  var useScrub  = CONFIG.mode === "scrub" && useVideo && !noMotion;
+
+
+  /* ---------- Styles ---------- */
+  var css = document.createElement("style");
+  css.textContent = [
+    ".svh-host{position:relative;isolation:isolate;}",
+    ".svh-host > *:not(.svh-bg){position:relative;z-index:1;}",
+
+    ".svh-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#0d0f0e center/cover no-repeat;}",
+    ".svh-bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}",
+
+    ".svh-tint{position:absolute;inset:0;pointer-events:none;",
+      "background:linear-gradient(to top,",
+        "rgba(8,10,9,var(--svh-o)) 0%,",
+        "rgba(8,10,9,calc(var(--svh-o) * .30)) 55%,",
+        "rgba(8,10,9,calc(var(--svh-o) * .55)) 100%);}",
+
+    /* content fade-in (stagger) */
+    ".svh-reveal > *:not(.svh-bg){animation:svh-in .9s cubic-bezier(.16,1,.3,1) both;}",
+    ".svh-reveal > *:nth-child(2){animation-delay:.05s}",
+    ".svh-reveal > *:nth-child(3){animation-delay:.15s}",
+    ".svh-reveal > *:nth-child(4){animation-delay:.25s}",
+    ".svh-reveal > *:nth-child(5){animation-delay:.35s}",
+    ".svh-reveal > *:nth-child(6){animation-delay:.45s}",
+    "@keyframes svh-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}",
+
+    /* scrub mode: content shuru mein chhupa hota hai, aakhir mein aata hai */
+    ".svh-scrub > *:not(.svh-bg){opacity:0;will-change:opacity,transform;}",
+
+    "@media (prefers-reduced-motion:reduce){",
+      ".svh-reveal > *:not(.svh-bg),.svh-scrub > *:not(.svh-bg){animation:none!important;opacity:1!important;transform:none!important;}}"
+  ].join("");
+  document.head.appendChild(css);
+
+
+  /* ---------- Background layer banao ---------- */
+  host.classList.add("svh-host");
+
+  var bg = document.createElement("div");
+  bg.className = "svh-bg";
+  bg.setAttribute("aria-hidden", "true");
+  if (CONFIG.posterUrl) bg.style.backgroundImage = "url('" + CONFIG.posterUrl + "')";
+
+  var VIDEO = null;
+  if (useVideo) {
+    VIDEO = document.createElement("video");
+    VIDEO.muted = true;
+    VIDEO.defaultMuted = true;
+    VIDEO.playsInline = true;
+    VIDEO.setAttribute("playsinline", "");
+    VIDEO.setAttribute("webkit-playsinline", "");
+    VIDEO.setAttribute("disablepictureinpicture", "");
+    VIDEO.preload = useScrub ? "auto" : "metadata";
+    if (CONFIG.posterUrl) VIDEO.poster = CONFIG.posterUrl;
+    if (!useScrub) { VIDEO.loop = true; VIDEO.autoplay = true; }
+    VIDEO.src = CONFIG.videoUrl;
+    bg.appendChild(VIDEO);
+  }
+
+  if (CONFIG.overlay > 0) {
+    var tint = document.createElement("div");
+    tint.className = "svh-tint";
+    tint.style.setProperty("--svh-o", String(CONFIG.overlay));
+    bg.appendChild(tint);
+  }
+
+  host.insertBefore(bg, host.firstChild);
+
+
+  /* ==================================================================
+     MODE: loop  (default — koi library load nahi hoti)
+     ================================================================== */
+  if (!useScrub) {
+    if (CONFIG.revealContent && !noMotion) host.classList.add("svh-reveal");
+
+    if (VIDEO) {
+      var tryPlay = function () {
+        var p = VIDEO.play();
+        if (p && p.catch) p.catch(function () { /* iOS low-power: poster hi dikhegi */ });
+      };
+      if (VIDEO.readyState >= 2) tryPlay();
+      else VIDEO.addEventListener("canplay", tryPlay, { once: true });
+
+      // Tab background mein jaye to video rok do (battery + CPU bachao)
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) VIDEO.pause(); else tryPlay();
+      });
+      if (noMotion) VIDEO.pause();
+    }
+    return;
+  }
+
+
+  /* ==================================================================
+     MODE: scrub  (GSAP ScrollTrigger load hota hai)
+     ================================================================== */
+  host.classList.add("svh-scrub");
+
+  var SCRIPTS = [
+    { url:"https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js",          test:function(){return window.gsap;} },
+    { url:"https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js", test:function(){return window.ScrollTrigger||(window.gsap&&window.gsap.ScrollTrigger);} },
+    { url:"https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js",        test:function(){return window.Lenis;}, optional:!CONFIG.smoothScroll }
+  ];
+
+  function loadScript(item, done) {
+    if (item.test()) return done();
+    if (item.optional && !CONFIG.smoothScroll) return done();
+    var s = document.createElement("script");
+    s.src = item.url; s.async = false;
+    s.onload = done;
+    s.onerror = function () { console.error("[hero-video] load fail:", item.url); done(); };
+    document.head.appendChild(s);
+  }
+
+  (function next(i) {
+    if (i >= SCRIPTS.length) return boot();
+    loadScript(SCRIPTS[i], function () { next(i + 1); });
+  })(0);
+
+
+  // Elementor/theme ke parents pinning tod dete hain — unhe theek karo
+  function fixAncestors() {
+    var el = host.parentElement;
+    while (el && el !== document.body) {
+      var cs = getComputedStyle(el);
+      if (cs.overflow !== "visible" && cs.overflowX !== "visible") el.style.overflow = "visible";
+      if (cs.transform !== "none") el.style.transform = "none";
+      el = el.parentElement;
+    }
+  }
+
+  function boot() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger || (gsap && gsap.ScrollTrigger);
+    if (!gsap || !ScrollTrigger) {
+      console.error("[hero-video] GSAP load nahi hua — content dikha rahe hain.");
+      host.classList.remove("svh-scrub");
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    fixAncestors();
+
+    if (CONFIG.smoothScroll && window.Lenis && !window.__svhLenis) {
+      var lenis = new window.Lenis({ lerp: 0.09, smoothWheel: true });
+      window.__svhLenis = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      var raf = function (t) { lenis.raf(t * 1000); };
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    VIDEO.pause();
+
+    var started = false;
+    function init() {
+      if (started) return;
+      started = true;
+
+      var END = CONFIG.scrollLength;
+      var content = Array.prototype.filter.call(host.children, function (c) {
+        return !c.classList.contains("svh-bg");
+      });
+
+      // Video ko scroll se scrub karo + hero ko pin karo
+      gsap.to(VIDEO, {
+        currentTime: VIDEO.duration || 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: host,
+          start: "top top",
+          end: END,
+          scrub: CONFIG.scrub,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+
+      // Content aakhri 30% mein fade-in ho kar end tak visible rahe
+      ScrollTrigger.create({
+        trigger: host,
+        start: "top top",
+        end: END,
+        scrub: true,
+        onUpdate: function (self) {
+          var o = Math.min(Math.max((self.progress - 0.70) / 0.20, 0), 1);
+          content.forEach(function (el, i) {
+            var d = Math.max(0, o - i * 0.06) / (1 - i * 0.06 || 1);
+            gsap.set(el, { opacity: d, y: (1 - d) * 30 });
+          });
+        }
+      });
+
+      ScrollTrigger.refresh();
+    }
+
+    if (VIDEO.readyState >= 1) init();
+    else VIDEO.addEventListener("loadedmetadata", init, { once: true });
+
+    // iOS: kuch devices pe seeking unlock karne ke liye ek touch chahiye
+    function unlock() {
+      var p = VIDEO.play();
+      if (p && p.then) p.then(function () { VIDEO.pause(); }).catch(function () {});
+      window.removeEventListener("touchstart", unlock);
+    }
+    window.addEventListener("touchstart", unlock, { passive: true });
+
+    window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+    if (window.jQuery) jQuery(window).on("elementor/frontend/init", function () { ScrollTrigger.refresh(); });
+  }
+})();
+</script>
