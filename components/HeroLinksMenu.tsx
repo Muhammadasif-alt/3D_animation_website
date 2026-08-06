@@ -13,6 +13,7 @@ export const HERO_PAGES = [
   { href: "/landscape", label: "Circle Hero", note: "Word behind a circular photo" },
   { href: "/landscape-2", label: "Scroll Video Hero", note: "Pinned, scroll-scrubbed video" },
   { href: "/landscape-3", label: "3D Showcase Hero", note: "Tilting card, colour per slide" },
+  { href: "/landscape-4", label: "Garden Hero", note: "Inset rounded photo slider" },
 ];
 
 export default function HeroLinksMenu({
