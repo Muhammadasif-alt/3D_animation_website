@@ -139,7 +139,9 @@ export default function ProjectRevealSection() {
       className="relative flex w-full flex-col justify-center overflow-hidden bg-white px-[6vw] py-[10vh] text-[#111] [min-height:100svh]"
       aria-label="Selected projects"
     >
-      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+      {/* uneven columns: an even split left a dead strip down the middle on
+          wide screens, because the copy is capped at max-w-md */}
+      <div className="grid items-center gap-10 md:grid-cols-[1fr_1.35fr] md:gap-10">
         {/* ---------------- copy, stacked ---------------- */}
         <div className="relative order-2 min-h-[300px] md:order-1 md:min-h-[340px]">
           {PROJECTS.map((p, i) => (
@@ -178,7 +180,9 @@ export default function ProjectRevealSection() {
             and the w-full card inside then resolves to zero. Keep the item
             stretched and push the card right with ml-auto instead. */}
         <div className="order-1 md:order-2">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-[#eee] md:ml-auto md:max-w-[460px]">
+          {/* portrait on phones; on desktop the aspect is dropped so the card
+              can be sized by height and fill the column's width */}
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-[#eee] md:ml-auto md:aspect-auto md:h-[64vh] md:max-h-[620px] md:max-w-[720px]">
             {PROJECTS.map((p, i) => (
               // hidden pre-JS with OPACITY, never a transform class: a Tailwind
               // translate would be parsed by GSAP as an existing `y` and its
