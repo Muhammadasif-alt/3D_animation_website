@@ -60,6 +60,7 @@ export default function GardenHero() {
   const shotRefs = useRef<(HTMLDivElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const railRef = useRef<HTMLDivElement>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
   const go = (dir: 1 | -1) =>
@@ -107,6 +108,77 @@ export default function GardenHero() {
 
     return () => ctx.revert();
   }, [index]);
+
+  // --- intro reveal (once, on mount) ---------------------------------------
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".gh-line", { yPercent: 115, duration: 1.1, stagger: 0.09 }, 0.15)
+        .from(".gh-in", { autoAlpha: 0, y: 26, duration: 0.8, stagger: 0.1 }, 0.55)
+        .from(".gh-nav > *", { autoAlpha: 0, y: -14, duration: 0.6, stagger: 0.06 }, 0.1)
+        // the two glass cards slide in from the edge they sit against
+        .from(".gh-clients", { autoAlpha: 0, x: 40, duration: 0.8 }, 0.7)
+        .from(".gh-project", { autoAlpha: 0, x: 40, duration: 0.8 }, 0.8)
+        .from(".gh-counter", { autoAlpha: 0, x: -30, duration: 0.8 }, 0.8);
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
+  // --- scroll: photo parallax + content drifting away ----------------------
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let ctx: gsap.Context;
+    let killed = false;
+
+    // ScrollTrigger is only needed once the user can actually scroll, so it is
+    // loaded on demand rather than shipped with the hero's first paint
+    import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+      if (killed) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        const scrub = {
+          trigger: root,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.6,
+        };
+
+        // photo drifts slower than the page
+        gsap.to(parallaxRef.current, { yPercent: 9, ease: "none", scrollTrigger: scrub });
+
+        // copy lifts away and dims
+        gsap.to(".gh-copy", {
+          y: -70,
+          autoAlpha: 0,
+          ease: "none",
+          scrollTrigger: { ...scrub, end: "60% top" },
+        });
+
+        // the card recedes: shrinks a touch and rounds off further
+        gsap.to(root, {
+          scale: 0.94,
+          borderRadius: 48,
+          ease: "none",
+          scrollTrigger: scrub,
+        });
+      }, root);
+    });
+
+    return () => {
+      killed = true;
+      ctx?.revert();
+    };
+  }, []);
 
   // --- autoplay -------------------------------------------------------------
   useEffect(() => {
@@ -158,32 +230,37 @@ export default function GardenHero() {
         aria-roledescription="carousel"
         aria-label="Our gardens"
       >
-        {/* ---------------- photos ---------------- */}
-        {SLIDES.map((slide, i) => (
-          <div
-            key={slide.key}
-            ref={(el) => {
-              shotRefs.current[i] = el;
-            }}
-            aria-hidden={i !== index}
-            className={`absolute inset-0 ${i === 0 ? "" : "opacity-0"}`}
-          >
-            <Image
-              src={slide.image}
-              alt={slide.place}
-              fill
-              priority={i === 0}
-              sizes="100vw"
-              className="object-cover"
-            />
-          </div>
-        ))}
+        {/* ---------------- photos ----------------
+             Wrapped so scroll parallax moves the whole stack; the per-slide
+             tweens keep control of the individual shots inside. Oversized by
+             16% so drifting it up never exposes an empty strip. */}
+        <div ref={parallaxRef} className="absolute inset-x-0 -top-[8%] h-[116%]">
+          {SLIDES.map((slide, i) => (
+            <div
+              key={slide.key}
+              ref={(el) => {
+                shotRefs.current[i] = el;
+              }}
+              aria-hidden={i !== index}
+              className={`absolute inset-0 ${i === 0 ? "" : "opacity-0"}`}
+            >
+              <Image
+                src={slide.image}
+                alt={slide.place}
+                fill
+                priority={i === 0}
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
 
         {/* legibility wash — strongest top-left where the nav and headline sit */}
         <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-br from-black/70 via-black/30 to-black/45" />
 
         {/* ---------------- nav ---------------- */}
-        <header className="absolute inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-5 md:px-10 md:py-7">
+        <header className="gh-nav absolute inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-5 md:px-10 md:py-7">
           <a href="/" className="text-sm text-white/90 md:text-base">
             @leaflife
           </a>
@@ -217,7 +294,7 @@ export default function GardenHero() {
         </header>
 
         {/* ---------------- 500+ clients card ---------------- */}
-        <div className="absolute right-5 top-[74px] z-40 hidden min-w-[210px] rounded-2xl bg-black/35 px-7 py-5 backdrop-blur-md md:right-10 md:top-24 md:block">
+        <div className="gh-clients absolute right-5 top-[74px] z-40 hidden min-w-[210px] rounded-2xl bg-black/35 px-7 py-5 backdrop-blur-md md:right-10 md:top-24 md:block">
           <p className="text-xl font-semibold text-white md:text-2xl">500+</p>
           <p className="mt-0.5 text-[11px] text-white/70">Satisfied Clients</p>
           {/* outlined rings, lightly overlapped — filled discs at -8px read as
@@ -235,17 +312,21 @@ export default function GardenHero() {
         </div>
 
         {/* ---------------- headline ---------------- */}
-        <div className="absolute inset-x-5 top-[26%] z-30 md:inset-x-auto md:left-10 md:top-1/2 md:max-w-3xl md:-translate-y-1/2">
+        <div className="gh-copy absolute inset-x-5 top-[26%] z-30 md:inset-x-auto md:left-10 md:top-1/2 md:max-w-3xl md:-translate-y-1/2">
+          {/* each line sits in its own clip window so it can rise out from
+              behind the one above — a plain fade doesn't read as deliberate */}
           <h1 className="font-display text-[2.6rem] font-medium uppercase leading-[0.98] tracking-[-0.01em] text-white sm:text-6xl md:text-7xl lg:text-8xl">
-            Create your
-            <br />
-            Dream Garden
+            {["Create your", "Dream Garden"].map((line) => (
+              <span key={line} className="block overflow-hidden pb-[0.06em]">
+                <span className="gh-line block">{line}</span>
+              </span>
+            ))}
           </h1>
-          <p className="mt-5 max-w-lg text-[13px] leading-relaxed text-white/75 md:mt-6 md:text-[15px]">
+          <p className="gh-in mt-5 max-w-lg text-[13px] leading-relaxed text-white/75 md:mt-6 md:text-[15px]">
             Crafting dream gardens with passion, creativity, and sustainability for over
             a decade with our experienced landscape artists and gardener teams.
           </p>
-          <div className="mt-7 flex flex-wrap items-center gap-3 md:mt-9 md:gap-4">
+          <div className="gh-in mt-7 flex flex-wrap items-center gap-3 md:mt-9 md:gap-4">
             <a
               href="#start"
               className="rounded-md bg-white px-7 py-3.5 text-sm font-medium text-black transition hover:scale-105"
@@ -262,7 +343,7 @@ export default function GardenHero() {
         </div>
 
         {/* ---------------- slide counter ---------------- */}
-        <div className="absolute bottom-6 left-5 z-40 flex items-center gap-4 md:bottom-10 md:left-10">
+        <div className="gh-counter absolute bottom-6 left-5 z-40 flex items-center gap-4 md:bottom-10 md:left-10">
           <span className="text-xs text-white">
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -275,7 +356,7 @@ export default function GardenHero() {
         </div>
 
         {/* ---------------- project card ---------------- */}
-        <div className="absolute bottom-20 left-5 right-5 z-40 md:bottom-10 md:left-auto md:right-10 md:w-[330px]">
+        <div className="gh-project absolute bottom-20 left-5 right-5 z-40 md:bottom-10 md:left-auto md:right-10 md:w-[330px]">
           <div className="relative rounded-2xl bg-black/35 p-5 backdrop-blur-md">
             <button
               type="button"
