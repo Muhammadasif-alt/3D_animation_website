@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LandscapeHero3 from "@/components/LandscapeHero3";
+import ProjectRevealSection from "@/components/ProjectRevealSection";
 
 export const metadata: Metadata = {
   title: "Landscape Hero 3 — 3D Showcase",
@@ -11,6 +12,7 @@ export default function LandscapeThreePage() {
   return (
     <main>
       <LandscapeHero3 />
+      <ProjectRevealSection />
     </main>
   );
 }
