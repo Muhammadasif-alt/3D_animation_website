@@ -123,7 +123,6 @@ export default function ProjectRevealSection() {
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           show(Math.min(total - 1, Math.floor(self.progress * total)));
-          gsap.set(".pr-rail", { scaleX: self.progress });
         },
       });
 
@@ -205,10 +204,6 @@ export default function ProjectRevealSection() {
         </div>
       </div>
 
-      {/* ---------------- progress rail ---------------- */}
-      <div className="mt-12 h-px w-full bg-[#111]/10 md:mt-16">
-        <div className="pr-rail h-full w-full origin-left scale-x-0 bg-[#111]" />
-      </div>
     </section>
   );
 }
