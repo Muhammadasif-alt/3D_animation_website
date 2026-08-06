@@ -217,7 +217,7 @@ export default function GardenHero() {
         </header>
 
         {/* ---------------- 500+ clients card ---------------- */}
-        <div className="absolute right-5 top-[74px] z-40 hidden rounded-2xl bg-black/35 px-5 py-4 backdrop-blur-md md:right-10 md:top-24 md:block">
+        <div className="absolute right-5 top-[74px] z-40 hidden min-w-[210px] rounded-2xl bg-black/35 px-7 py-5 backdrop-blur-md md:right-10 md:top-24 md:block">
           <p className="text-xl font-semibold text-white md:text-2xl">500+</p>
           <p className="mt-0.5 text-[11px] text-white/70">Satisfied Clients</p>
           {/* outlined rings, lightly overlapped — filled discs at -8px read as
