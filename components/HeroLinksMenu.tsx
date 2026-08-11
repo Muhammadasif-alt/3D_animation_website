@@ -14,6 +14,7 @@ export const HERO_PAGES = [
   { href: "/landscape-2", label: "Scroll Video Hero", note: "Pinned, scroll-scrubbed video" },
   { href: "/landscape-3", label: "3D Showcase Hero", note: "Tilting card, colour per slide" },
   { href: "/landscape-4", label: "Garden Hero", note: "Inset rounded photo slider" },
+  { href: "/landscape-5", label: "Card Swap Hero", note: "Cards grow into the background" },
 ];
 
 export default function HeroLinksMenu({
